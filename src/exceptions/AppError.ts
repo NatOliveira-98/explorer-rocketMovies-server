@@ -10,12 +10,10 @@ export enum StatusCode {
 interface AppErrorTypes {
   description: string;
   httpCode: StatusCode;
-  isOperational?: boolean;
 }
 
 export class AppError extends Error {
   readonly httpCode: StatusCode;
-  readonly isOperational: boolean = true;
 
   constructor(args: AppErrorTypes) {
     super(args.description);
@@ -23,10 +21,6 @@ export class AppError extends Error {
     Object.setPrototypeOf(this, new.target.prototype);
 
     this.httpCode = args.httpCode;
-
-    if (args.isOperational !== undefined) {
-      this.isOperational = args.isOperational;
-    }
 
     Error.captureStackTrace(this);
   }
