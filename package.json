@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev src/server.ts",
-    "knex:make": "npx knex migrate:make migrationName --knexfile=./src/database/knexfile.ts",
-    "knex:latest": "npx knex migrate:latest --knexfile=./src/database/knexfile.ts"
+    "knex:make": "knex migrate:make migrationName --knexfile=./src/database/knexfile.ts",
+    "knex:latest": "knex migrate:latest --knexfile=./src/database/knexfile.ts"
   },
   "keywords": [],
   "author": "",
