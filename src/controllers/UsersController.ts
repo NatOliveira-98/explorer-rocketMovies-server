@@ -33,13 +33,15 @@ export class UsersController {
     return res.status(StatusCode.CREATED).json();
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: Request | any, res: Response) {
     const { name, email, currentPassword, newPassword } = req.body;
-    const { id } = req.params;
+    const user_id = req.user.id;
 
     const db = await connectToDB();
 
-    const userExists = await db.get('SELECT * FROM users WHERE id = (?)', [id]);
+    const userExists = await db.get('SELECT * FROM users WHERE id = (?)', [
+      user_id,
+    ]);
 
     if (!userExists) {
       throw new AppError({
@@ -97,7 +99,7 @@ export class UsersController {
 
     await db.run(
       `UPDATE users SET name = ?, email = ?, password = ?, updated_at = DATETIME('now') WHERE id = ?`,
-      [userExists.name, userExists.email, userExists.password, id],
+      [userExists.name, userExists.email, userExists.password, user_id],
     );
 
     return res.status(StatusCode.OK).json();

@@ -4,9 +4,9 @@ import { knexConnection } from '../database/knexConnection';
 import { AppError, StatusCode } from '../exceptions/AppError';
 
 export class MoviesNotesController {
-  async create(req: Request, res: Response) {
+  async create(req: Request | any, res: Response) {
     const { title, description, rating, tags } = req.body;
-    const { user_id } = req.params;
+    const user_id = req.user.id;
 
     if (rating < 1 || rating > 5) {
       throw new AppError({
@@ -104,8 +104,9 @@ export class MoviesNotesController {
     return res.status(StatusCode.OK).json({ ...note, tags });
   }
 
-  async index(req: Request, res: Response) {
-    const { title, user_id } = req.query;
+  async index(req: Request | any, res: Response) {
+    const { title } = req.query;
+    const user_id = req.user.id;
 
     const notes = await knexConnection('moviesNotes')
       .where({ user_id })
