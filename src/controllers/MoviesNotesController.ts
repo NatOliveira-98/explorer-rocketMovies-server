@@ -1,12 +1,19 @@
 import { Request, Response } from 'express';
 
 import { knexConnection } from '../database/knexConnection';
-import { StatusCode } from '../exceptions/AppError';
+import { AppError, StatusCode } from '../exceptions/AppError';
 
 export class MoviesNotesController {
   async create(req: Request, res: Response) {
     const { title, description, rating, tags } = req.body;
     const { user_id } = req.params;
+
+    if (rating < 1 || rating > 5) {
+      throw new AppError({
+        description: 'Favor insira uma nota entre 1 e 5',
+        httpCode: StatusCode.BAD_REQUEST,
+      });
+    }
 
     const note_id = await knexConnection('moviesNotes').insert({
       title,
@@ -36,6 +43,54 @@ export class MoviesNotesController {
     return res
       .status(StatusCode.OK)
       .json({ message: 'Anotações do filme foram deletadas' });
+  }
+
+  async update(req: Request, res: Response) {
+    const { title, description, rating, tags } = req.body;
+    const { id } = req.params;
+    const { user_id } = req.query;
+
+    const noteExists = await knexConnection('moviesNotes')
+      .where({ id })
+      .first();
+
+    if (!noteExists) {
+      throw new AppError({
+        description: 'Nota não encontrada.',
+        httpCode: StatusCode.BAD_REQUEST,
+      });
+    }
+
+    if (rating < 1 || rating > 5) {
+      throw new AppError({
+        description: 'Favor insira uma nota entre 1 e 5',
+        httpCode: StatusCode.BAD_REQUEST,
+      });
+    }
+
+    noteExists.title = title ?? noteExists.title;
+    noteExists.description = description ?? noteExists.description;
+    noteExists.rating = rating ?? noteExists.rating;
+
+    await knexConnection('moviesNotes').where({ id }).update({
+      title: noteExists.title,
+      description: noteExists.description,
+      rating: noteExists.rating,
+      updated_at: new Date().toISOString(),
+    });
+
+    const updatedTags = tags.map((name: string) => {
+      return {
+        name,
+        note_id: id,
+        user_id,
+      };
+    });
+
+    await knexConnection('moviesTags').where({ note_id: id }).del(tags);
+    await knexConnection('moviesTags').insert(updatedTags);
+
+    return res.status(StatusCode.OK).json({ ...noteExists, updatedTags });
   }
 
   async show(req: Request, res: Response) {
