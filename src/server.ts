@@ -1,14 +1,16 @@
 import 'express-async-errors';
 import express, { Request, Response, NextFunction } from 'express';
 
-import { AppError, StatusCode } from './exceptions/AppError';
 import { connectToDB } from './database/sqlite';
+import { AppError, StatusCode } from './exceptions/AppError';
+import { uploadConfigs } from './configs/upload';
 
 import { routes } from './routes';
 
 const app = express();
 
 app.use(express.json());
+app.use('/files', express.static(uploadConfigs.UPLOADS_FOLDER));
 app.use(routes);
 
 connectToDB();
