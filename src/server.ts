@@ -1,5 +1,6 @@
 import 'express-async-errors';
 import express, { Request, Response, NextFunction } from 'express';
+import cors from 'cors';
 
 import { connectToDB } from './database/sqlite';
 import { AppError, StatusCode } from './exceptions/AppError';
@@ -9,6 +10,7 @@ import { routes } from './routes';
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use('/files', express.static(uploadConfigs.UPLOADS_FOLDER));
 app.use(routes);

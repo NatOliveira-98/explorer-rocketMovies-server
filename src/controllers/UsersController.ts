@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { hash, compare } from 'bcryptjs';
+import { hash, compare, genSalt } from 'bcryptjs';
 
 import { connectToDB } from '../database/sqlite';
 import { AppError, StatusCode } from '../exceptions/AppError';
@@ -22,7 +22,8 @@ export class UsersController {
       });
     }
 
-    const hashedPassword = await hash(password, 8);
+    const salt = await genSalt(8);
+    const hashedPassword = await hash(password, salt);
 
     await db.run('INSERT INTO users (name, email, password) VALUES (?, ?, ?)', [
       name,
