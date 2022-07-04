@@ -14,7 +14,7 @@ export class SessionsController {
 
     if (!userExists) {
       throw new AppError({
-        description: 'e-mail e/ou senha incorreto(a)',
+        description: 'e-mail e/ou senha incorreto',
         httpCode: StatusCode.UNAUTHORIZED,
       });
     }
@@ -23,7 +23,7 @@ export class SessionsController {
 
     if (!passwordMatched) {
       throw new AppError({
-        description: 'e-mail e/ou senha incorreto(a)',
+        description: 'e-mail e/ou senha incorreto',
         httpCode: StatusCode.UNAUTHORIZED,
       });
     }
