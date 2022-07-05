@@ -45,10 +45,10 @@ export class MoviesNotesController {
       .json({ message: 'Anotações do filme foram deletadas' });
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: Request | any, res: Response) {
     const { title, description, rating, tags } = req.body;
     const { id } = req.params;
-    const { user_id } = req.query;
+    const user_id = req.user.id;
 
     const noteExists = await knexConnection('moviesNotes')
       .where({ id })
@@ -113,6 +113,16 @@ export class MoviesNotesController {
       .whereLike('title', `%${title}%`)
       .orderBy('title');
 
-    return res.status(StatusCode.OK).json(notes);
+    const userTags = await knexConnection('moviesTags').where({ user_id });
+    const notesWithTags = notes.map(note => {
+      const noteTags = userTags.filter(tag => tag.note_id === note.id);
+
+      return {
+        ...note,
+        tags: noteTags,
+      };
+    });
+
+    return res.status(StatusCode.OK).json(notesWithTags);
   }
 }
