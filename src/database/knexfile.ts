@@ -12,7 +12,7 @@ const knexConfig: { [key: string]: Knex.Config } = {
         connection.run('PRAGMA foreign_keys = ON', callback),
     },
     migrations: {
-      directory: path.resolve(__dirname, 'migrations'),
+      directory: path.resolve(__dirname, 'migrations', 'knex'),
     },
     useNullAsDefault: true,
   },

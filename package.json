@@ -4,9 +4,9 @@
   "description": "API desenvolvida para um challenge durante o programa Explorer",
   "main": "src/server.js",
   "scripts": {
+    "build": "tsc",
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "ts-node-dev src/server.ts",
-    "build": "tsc",
     "knex:migrate:make": "knex --knexfile=./src/database/knexfile.ts -x ts migrate:make",
     "knex:migrate:latest": "knex --knexfile=./src/database/knexfile.ts migrate:latest"
   },

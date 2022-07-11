@@ -3,11 +3,13 @@ import 'dotenv/config';
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 
-import { connectToDB } from './database/sqlite';
+import { runMigrations } from './database/sqliteConnection';
 import { AppError, StatusCode } from './exceptions/AppError';
 import { uploadConfigs } from './configs/upload';
 
 import { routes } from './routes';
+
+runMigrations();
 
 const app = express();
 
@@ -15,8 +17,6 @@ app.use(cors());
 app.use(express.json());
 app.use('/files', express.static(uploadConfigs.UPLOADS_FOLDER));
 app.use(routes);
-
-connectToDB();
 
 // error middleware
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
