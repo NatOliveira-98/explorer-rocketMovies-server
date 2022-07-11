@@ -4,8 +4,9 @@
   "description": "API desenvolvida para um challenge durante o programa Explorer",
   "main": "src/server.js",
   "scripts": {
+    "copyDatabase": "copyfiles --error --up 1 src/database/database.db dist/",
     "createAvatarFolder": "copyfiles --error --up 1 src/temp/*.svg src/temp/uploads/*.svg dist/",
-    "build": "tsc && npm run createAvatarFolder",
+    "build": "tsc && npm run copyDatabase && npm run createAvatarFolder",
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "ts-node-dev src/server.ts",
     "knex:migrate:make": "knex --knexfile=./src/database/knexfile.ts -x ts migrate:make",
